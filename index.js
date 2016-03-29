@@ -7,16 +7,15 @@ const
 
 function getBuildDir() {
     return Promise.all([
-        readPkgUp(),
-        branchName.assumeMaster()
-    ]).then(function (data) {
-        const
-            pkgData = data[0],
-            currBranch = data[1],
-            projectVersion = pkgData.pkg.version;
+            branchName.assumeMaster(),
+            readPkgUp()
+        ]).then(function (data) {
+            const
+                branch = data[0],
+                version = data[1].pkg.version;
 
-        return path.join('build', currBranch, projectVersion);
-    });
+            return path.join('build', branch, version);
+        });
 }
 
 module.exports = {
