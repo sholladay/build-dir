@@ -1,0 +1,9 @@
+# Dependencies are installed manually or using a build process, so they
+# can benefit from machine-specific compiling, etc.
+node_modules
+
+# Operating system data is different for each developer.
+.DS_Store
+
+# IDE data is different for each developer.
+.idea
