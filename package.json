@@ -20,6 +20,9 @@
     "email": "bugs@seth-holladay.com"
   },
   "license": "MPL-2.0",
+  "files": [
+    "index.js"
+  ],
   "dependencies": {
     "branch-name": "0.1.2",
     "read-pkg-up": "1.0.1"
