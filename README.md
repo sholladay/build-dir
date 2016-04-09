@@ -25,8 +25,16 @@ const buildDir = require('build-dir');
 
 Get a path to use when writing the build.
 ````javascript
-buildDir.get().then(function (dirPath) {
+buildDir.get().then((dirPath) => {
    console.log(dirPath);
+});
+````
+
+Set up convenient `latest-build` and branch-specific `latest` links.
+````javascript
+buildDir.link().then(() => {
+    // latest-build now points to build/<branch>/latest,
+    // which in turn points to build/<branch>/<version>
 });
 ````
 
