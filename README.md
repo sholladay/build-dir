@@ -26,15 +26,29 @@ const buildDir = require('build-dir');
 Get a path to use when writing the build.
 ````javascript
 buildDir.get().then((dirPath) => {
-   console.log(dirPath);
+    console.log('Build directory:', dirPath);
 });
 ````
 
 Set up convenient `latest-build` and branch-specific `latest` links.
 ````javascript
 buildDir.link().then(() => {
-    // latest-build now points to build/<branch>/latest,
-    // which in turn points to build/<branch>/<version>
+    console.log('Linking complete.')
+    // latest-build -> build/<branch>/latest -> build/<branch>/<version>
+});
+````
+
+Let us manage the lifecycle steps for you.
+````javascript
+buildDir.prepare().then((dir) => {
+    // Put stuff in here:
+    console.log('Temp dir:', dir.path);
+
+    // ... some time later ...
+
+    // Move the temp dir to its permanent home and set up
+    // latest links.
+    return dir.finalize();
 });
 ````
 
