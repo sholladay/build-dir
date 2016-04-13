@@ -20,6 +20,11 @@ function getBuildData(known) {
     return Promise.all([
             known.branch || branchName.assumeMaster(),
             known.version || readPkgUp().then((data) => {
+                if (!data || !data.pkg) {
+                    throw new TypeError(
+                        'Unable to determine the project version'
+                    );
+                }
                 return data.pkg.version;
             })
         ]).then((data) => {
