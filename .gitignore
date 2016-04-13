@@ -2,8 +2,12 @@
 # can benefit from machine-specific compiling, etc.
 node_modules
 
-# Operating system data is different for each developer.
+# Operating system data is unique to each developer.
 .DS_Store
 
-# IDE data is different for each developer.
+# IDE data is unique to each developer.
 .idea
+
+# Build artifacts are unique to each developer.
+build
+latest-build
