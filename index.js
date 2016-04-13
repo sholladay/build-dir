@@ -71,7 +71,10 @@ function prepare(known) {
                     finalize : () => {
                         return (new Promise((resolve) => {
                             const newPath = makeBuildPath(data);
-                            fs.rename(tempPath, newPath, () => {
+                            fs.rename(tempPath, newPath, (err) => {
+                                if (err) {
+                                    throw err;
+                                }
                                 resolve();
                             });
                         })).then(() => {
