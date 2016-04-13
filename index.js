@@ -4,7 +4,9 @@ const
     branchName = require('branch-name'),
     readPkgUp = require('read-pkg-up'),
     path = require('path'),
+    os = require('os'),
     fs = require('fs'),
+    fsAtomic = require('fs-atomic'),
     buildRoot = 'build';
 
 function makeBuildPath(data) {
@@ -41,20 +43,10 @@ function link(known) {
             version = data.version,
             branchLatestPath = path.join(buildRoot, branch, 'latest');
 
-        // TODO: We need to create non-existent directories here.
-        return new Promise((resolve) => {
-            fs.symlink(version, branchLatestPath, (err) => {
-                if (err) {
-                    throw err;
-                }
-                fs.symlink(branchLatestPath, 'latest-build', (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    resolve();
-                });
+        return fsAtomic.symlink(version, branchLatestPath)
+            .then(() => {
+                return fsAtomic.symlink(branchLatestPath, 'latest-build');
             });
-        });
     });
 }
 
