@@ -66,17 +66,22 @@ function prepare(known) {
                 resolve({
                     path : tempPath,
                     finalize : () => {
-                        return (new Promise((resolve) => {
-                            const newPath = makeBuildPath(data);
-                            fs.rename(tempPath, newPath, (err) => {
-                                if (err) {
-                                    throw err;
-                                }
-                                resolve();
+                        const newPath = makeBuildPath(data);
+
+                        return fsAtomic.mkdir(path.dirname(newPath))
+                            .then(() => {
+                                return new Promise((resolve) => {
+                                    fs.rename(tempPath, newPath, (err) => {
+                                        if (err) {
+                                            throw err;
+                                        }
+                                        resolve();
+                                    });
+                                });
+                            })
+                            .then(() => {
+                                return link(data);
                             });
-                        })).then(() => {
-                            return link(data);
-                        });
                     }
                 });
             });
