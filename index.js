@@ -1,12 +1,13 @@
 'use strict';
 
 const
-    branchName = require('branch-name'),
-    readPkgUp = require('read-pkg-up'),
     path = require('path'),
     os = require('os'),
     fs = require('fs'),
     fsAtomic = require('fs-atomic'),
+    branchName = require('branch-name'),
+    readPkgUp = require('read-pkg-up'),
+    del = require('del'),
     buildRoot = 'build';
 
 function makeBuildPath(data) {
@@ -69,6 +70,9 @@ function prepare(known) {
                         const newPath = makeBuildPath(data);
 
                         return fsAtomic.mkdir(path.dirname(newPath))
+                            .then(() => {
+                                return del(newPath);
+                            })
                             .then(() => {
                                 return new Promise((resolve) => {
                                     fs.rename(tempPath, newPath, (err) => {
