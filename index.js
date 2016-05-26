@@ -21,12 +21,12 @@ function getBuildData(known) {
     return Promise.all([
             known.branch || branchName.assumeMaster(),
             known.version || readPkgUp().then((data) => {
-                if (!data || !data.pkg) {
-                    throw new TypeError(
-                        'Unable to determine the project version'
-                    );
+                if (data && data.pkg) {
+                    return data.pkg.version;
                 }
-                return data.pkg.version;
+                throw new TypeError(
+                    'Unable to determine the project version.'
+                );
             })
         ]).then((data) => {
             return {
@@ -57,27 +57,32 @@ function link(known) {
 }
 
 function prepare(known) {
+
     return getBuildData(known).then((data) => {
-        return new Promise((resolve) => {
-            const prefix = path.join(os.tmpdir(), '/');
-            fs.mkdtemp(prefix, (err, tempPath) => {
+
+        return new Promise((resolve, reject) => {
+
+            fs.mkdtemp(path.join(os.tmpdir(), '/'), (err, tempPath) => {
+
                 if (err) {
-                    throw err;
+                    reject(err);
+                    return;
                 }
+
                 resolve({
                     path : tempPath,
-                    finalize : () => {
+                    finalize() {
                         const newPath = makeBuildPath(data);
-
                         return fsAtomic.mkdir(path.dirname(newPath))
                             .then(() => {
                                 return del(newPath);
                             })
                             .then(() => {
-                                return new Promise((resolve) => {
+                                return new Promise((resolve, reject) => {
                                     fs.rename(tempPath, newPath, (err) => {
                                         if (err) {
-                                            throw err;
+                                            reject(err);
+                                            return;
                                         }
                                         resolve();
                                     });
@@ -94,9 +99,7 @@ function prepare(known) {
 }
 
 module.exports = {
-    // TODO: Use the shorthand syntax here when Node.js upgrades V8
-    //       to a version that does not throw a SyntaxError.
-    get : get,
+    get,
     link,
     prepare
 };
