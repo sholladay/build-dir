@@ -1,4 +1,4 @@
-# build-dir
+# build-dir [![Build status for build-dir on Circle CI.](https://img.shields.io/circleci/project/sholladay/build-dir/master.svg "Circle Build Status")](https://circleci.com/gh/sholladay/build-dir "Build Dir Builds")
 
 > Get a place to put your build.
 

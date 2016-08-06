@@ -1,69 +1,73 @@
 'use strict';
 
-const
-    path = require('path'),
-    os = require('os'),
-    fs = require('fs'),
-    fsAtomic = require('fs-atomic'),
-    branchName = require('branch-name'),
-    readPkgUp = require('read-pkg-up'),
-    del = require('del'),
-    buildRoot = 'build';
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
+const fsAtomic = require('fs-atomic');
+const branchName = require('branch-name');
+const readPkgUp = require('read-pkg-up');
+const del = require('del');
 
-function makeBuildPath(data) {
+const buildRoot = 'build';
+
+const makeBuildPath = (data) => {
     return path.join(buildRoot, data.branch, data.version);
-}
+};
 
-function getBuildData(known) {
-
-    known = known || Object.create(null);
-
+const getBuildData = (option) => {
+    const config = Object.assign({}, option);
     return Promise.all([
-            known.branch || branchName.assumeMaster(),
-            known.version || readPkgUp().then((data) => {
-                if (data && data.pkg) {
-                    return data.pkg.version;
-                }
-                throw new TypeError(
-                    'Unable to determine the project version.'
-                );
-            })
-        ]).then((data) => {
+        config.branch || branchName.assumeMaster(),
+        config.version || readPkgUp().then((data) => {
+            if (data && data.pkg) {
+                return data.pkg.version;
+            }
+            throw new TypeError(
+                'Unable to determine the project version.'
+            );
+        })
+    ])
+        .then((data) => {
             return {
                 branch  : data[0],
                 version : data[1]
             };
         });
-}
+};
 
-function get(known) {
-    return getBuildData(known).then((data) => {
-            return makeBuildPath(data);
-        });
-}
-
-function link(known) {
-    return getBuildData(known).then((data) => {
-        const
-            branch = data.branch,
-            version = data.version,
-            branchLatestPath = path.join(buildRoot, branch, 'latest');
-
-        return fsAtomic.symlink(version, branchLatestPath)
-            .then(() => {
-                return fsAtomic.symlink(branchLatestPath, 'latest-build');
-            });
+const get = (option) => {
+    return getBuildData(option).then((data) => {
+        return makeBuildPath(data);
     });
-}
+};
 
-function prepare(known) {
+const link = (option) => {
+    return getBuildData(option).then((data) => {
+        const { branch, version } = data;
+        const branchLatestPath = path.join(buildRoot, branch, 'latest');
 
-    return getBuildData(known).then((data) => {
+        return fsAtomic.symlink(version, branchLatestPath).then(() => {
+            return fsAtomic.symlink(branchLatestPath, 'latest-build');
+        });
+    });
+};
 
+const rename = (oldPath, newPath) => {
+    return new Promise((resolve, reject) => {
+        fs.rename(oldPath, newPath, (err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve();
+        });
+    });
+};
+
+const prepare = (option) => {
+    return getBuildData(option).then((data) => {
         return new Promise((resolve, reject) => {
-
             fs.mkdtemp(path.join(os.tmpdir(), '/'), (err, tempPath) => {
-
                 if (err) {
                     reject(err);
                     return;
@@ -78,15 +82,7 @@ function prepare(known) {
                                 return del(newPath);
                             })
                             .then(() => {
-                                return new Promise((resolve, reject) => {
-                                    fs.rename(tempPath, newPath, (err) => {
-                                        if (err) {
-                                            reject(err);
-                                            return;
-                                        }
-                                        resolve();
-                                    });
-                                });
+                                return rename(tempPath, newPath);
                             })
                             .then(() => {
                                 return link(data);
@@ -96,7 +92,7 @@ function prepare(known) {
             });
         });
     });
-}
+};
 
 module.exports = {
     get,
