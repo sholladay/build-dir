@@ -1,6 +1,6 @@
 {
   "name": "build-dir",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Get a place to put your build.",
   "homepage": "https://github.com/sholladay/build-dir",
   "main": "index.js",
