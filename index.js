@@ -4,50 +4,29 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 const fsAtomic = require('fs-atomic');
-const branchName = require('branch-name');
-const readPkgUp = require('read-pkg-up');
+const buildData = require('build-data');
 const del = require('del');
 
-const buildRoot = 'build';
-
-const makeBuildPath = (data) => {
-    return path.join(buildRoot, data.branch, data.version);
-};
-
-const getBuildData = (option) => {
-    const config = Object.assign({}, option);
-    return Promise.all([
-        config.branch || branchName.assumeMaster(),
-        config.version || readPkgUp().then((data) => {
-            if (data && data.pkg) {
-                return data.pkg.version;
-            }
-            throw new TypeError(
-                'Unable to determine the project version.'
-            );
-        })
-    ])
-        .then((data) => {
-            return {
-                branch  : data[0],
-                version : data[1]
-            };
-        });
+const buildPath = (option) => {
+    return path.join('build', option.branch, option.version);
 };
 
 const get = (option) => {
-    return getBuildData(option).then((data) => {
-        return makeBuildPath(data);
+    return buildData(option).then((data) => {
+        return buildPath(data);
     });
 };
 
 const link = (option) => {
-    return getBuildData(option).then((data) => {
+    return buildData(option).then((data) => {
         const { branch, version } = data;
-        const branchLatestPath = path.join(buildRoot, branch, 'latest');
+        const branchLatestDir = buildPath({
+            branch,
+            version : 'latest'
+        });
 
-        return fsAtomic.symlink(version, branchLatestPath).then(() => {
-            return fsAtomic.symlink(branchLatestPath, 'latest-build');
+        return fsAtomic.symlink(version, branchLatestDir).then(() => {
+            return fsAtomic.symlink(branchLatestDir, 'latest-build');
         });
     });
 };
@@ -65,7 +44,7 @@ const rename = (oldPath, newPath) => {
 };
 
 const prepare = (option) => {
-    return getBuildData(option).then((data) => {
+    return buildData(option).then((data) => {
         return new Promise((resolve, reject) => {
             fs.mkdtemp(path.join(os.tmpdir(), '/'), (err, tempPath) => {
                 if (err) {
@@ -76,7 +55,7 @@ const prepare = (option) => {
                 resolve({
                     path : tempPath,
                     finalize() {
-                        const newPath = makeBuildPath(data);
+                        const newPath = buildPath(data);
                         return fsAtomic.mkdir(path.dirname(newPath))
                             .then(() => {
                                 return del(newPath);

@@ -28,10 +28,9 @@
     "index.js"
   ],
   "dependencies": {
-    "branch-name": "0.1.4",
+    "build-data": "0.1.0",
     "del": "2.2.0",
-    "fs-atomic": "0.4.0",
-    "read-pkg-up": "1.0.1"
+    "fs-atomic": "0.4.0"
   },
   "devDependencies": {
     "eslint-config-tidy": "0.3.0",
@@ -40,6 +39,7 @@
   "keywords": [
     "compile",
     "build",
+    "builds",
     "dir",
     "path",
     "tooling"
