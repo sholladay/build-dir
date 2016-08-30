@@ -7,14 +7,20 @@ const fsAtomic = require('fs-atomic');
 const buildData = require('build-data');
 const del = require('del');
 
-const buildPath = (option) => {
-    return path.join('build', option.branch, option.version);
+const rename = (oldPath, newPath) => {
+    return new Promise((resolve, reject) => {
+        fs.rename(oldPath, newPath, (err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve();
+        });
+    });
 };
 
-const get = (option) => {
-    return buildData(option).then((data) => {
-        return buildPath(data);
-    });
+const buildPath = (option) => {
+    return path.join('build', option.branch, option.version);
 };
 
 const link = (option) => {
@@ -31,19 +37,17 @@ const link = (option) => {
     });
 };
 
-const rename = (oldPath, newPath) => {
-    return new Promise((resolve, reject) => {
-        fs.rename(oldPath, newPath, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve();
-        });
-    });
+const buildDir = (option) => {
+    return buildData(option).then(buildPath);
 };
 
-const prepare = (option) => {
+buildDir.latest = (option) => {
+    return buildData.latest(option).then(buildPath);
+};
+
+buildDir.link = link;
+
+buildDir.prepare = (option) => {
     return buildData(option).then((data) => {
         return new Promise((resolve, reject) => {
             fs.mkdtemp(path.join(os.tmpdir(), '/'), (err, tempPath) => {
@@ -73,8 +77,4 @@ const prepare = (option) => {
     });
 };
 
-module.exports = {
-    get,
-    link,
-    prepare
-};
+module.exports = buildDir;

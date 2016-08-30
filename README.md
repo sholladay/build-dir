@@ -27,7 +27,15 @@ const buildDir = require('build-dir');
 Get a path to use when writing the build.
 
 ```js
-buildDir.get().then((dirPath) => {
+buildDir().then((dirPath) => {
+    console.log('Build directory:', dirPath);
+});
+```
+
+Get the path that was used for the most recent build.
+
+```js
+buildDir.latest().then((dirPath) => {
     console.log('Build directory:', dirPath);
 });
 ```
