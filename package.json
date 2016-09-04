@@ -28,7 +28,7 @@
     "index.js"
   ],
   "dependencies": {
-    "build-data": "^0.2.0",
+    "build-data": "^0.3.0",
     "del": "^2.2.0",
     "fs-atomic": "^0.5.0"
   },

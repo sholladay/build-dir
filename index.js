@@ -19,22 +19,30 @@ const rename = (oldPath, newPath) => {
     });
 };
 
-const buildPath = (option) => {
-    return path.join('build', option.branch, option.version);
-};
-
-const link = (option) => {
-    return buildData(option).then((data) => {
-        const { branch, version } = data;
-        const branchLatestDir = buildPath({
-            branch,
-            version : 'latest'
-        });
-
-        return fsAtomic.symlink(version, branchLatestDir).then(() => {
-            return fsAtomic.symlink(branchLatestDir, 'latest-build');
+const mkdtemp = () => {
+    return new Promise((resolve, reject) => {
+        fs.mkdtemp(path.join(os.tmpdir(), '/'), (err, tempPath) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(tempPath);
         });
     });
+};
+
+const buildPath = (option) => {
+    const config = Object.assign({}, option);
+    const { branch, version } = config;
+
+    if (!branch) {
+        throw new TypeError('A branch is required to create the build path.');
+    }
+    if (!version) {
+        throw new TypeError('A version is required to create the build path');
+    }
+
+    return path.join('build', branch, version);
 };
 
 const buildDir = (option) => {
@@ -45,34 +53,57 @@ buildDir.latest = (option) => {
     return buildData.latest(option).then(buildPath);
 };
 
-buildDir.link = link;
+buildDir.link = (option) => {
+    const config = Object.assign({}, option);
+    const { branch, version } = config;
+
+    if (!branch) {
+        throw new TypeError('A branch is required to create the build path.');
+    }
+    if (!version) {
+        throw new TypeError('A version is required to create the build path');
+    }
+
+    const cwd = path.resolve(config.cwd || '');
+
+    const branchLatestPath = buildPath({
+        branch,
+        version : 'latest'
+    });
+
+    const absBranchLatestLink = path.resolve(cwd, branchLatestPath);
+
+    const absLatestBuildLink = path.resolve(cwd, 'latest-build');
+
+    return fsAtomic.symlink(version, absBranchLatestLink).then(() => {
+        return fsAtomic.symlink(branchLatestPath, absLatestBuildLink);
+    });
+};
 
 buildDir.prepare = (option) => {
-    return buildData(option).then((data) => {
-        return new Promise((resolve, reject) => {
-            fs.mkdtemp(path.join(os.tmpdir(), '/'), (err, tempPath) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
+    const config = Object.assign({}, option);
+    const cwd = config.cwd = path.resolve(config.cwd || '');
 
-                resolve({
-                    path : tempPath,
-                    finalize() {
-                        const newPath = buildPath(data);
-                        return fsAtomic.mkdir(path.dirname(newPath))
-                            .then(() => {
-                                return del(newPath);
-                            })
-                            .then(() => {
-                                return rename(tempPath, newPath);
-                            })
-                            .then(() => {
-                                return link(data);
+    return buildData(config).then((data) => {
+        return mkdtemp().then((tempPath) => {
+            return {
+                path : tempPath,
+                finalize() {
+                    const newPath = path.resolve(cwd, buildPath(data));
+                    return fsAtomic.mkdir(path.dirname(newPath))
+                        .then(() => {
+                            return del(newPath, {
+                                force : true
                             });
-                    }
-                });
-            });
+                        })
+                        .then(() => {
+                            return rename(tempPath, newPath);
+                        })
+                        .then(() => {
+                            return buildDir.link(Object.assign({ cwd }, data));
+                        });
+                }
+            };
         });
     });
 };
