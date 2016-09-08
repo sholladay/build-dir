@@ -108,7 +108,7 @@ Within the `cwd`, writes a symlink at `latest-build` pointing to `build/<branch>
 Returns a promise for an object with these fields:
 
  - `path` is a newly created temporary directory for you to write the build to.
- - `finalize()` moves the temporary directory to the path determined by `buildDir()`.
+ - `finalize()` moves `path` to its final location and runs `buildDir.link()` on it.
 
 ## Related
 
