@@ -29,6 +29,7 @@
   ],
   "dependencies": {
     "build-data": "^0.3.0",
+    "build-path": "^0.1.0",
     "del": "^2.2.0",
     "fs-atomic": "^0.7.0"
   },
@@ -40,8 +41,14 @@
     "compile",
     "build",
     "builds",
-    "dir",
+    "branch",
+    "version",
     "path",
+    "paths",
+    "dir",
+    "dirs",
+    "directory",
+    "directories",
     "tooling"
   ],
   "xo": {

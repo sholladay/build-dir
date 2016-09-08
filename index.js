@@ -5,6 +5,7 @@ const os = require('os');
 const fs = require('fs');
 const fsAtomic = require('fs-atomic');
 const buildData = require('build-data');
+const buildPath = require('build-path');
 const del = require('del');
 
 const rename = (oldPath, newPath) => {
@@ -29,20 +30,6 @@ const mkdtemp = () => {
             resolve(tempPath);
         });
     });
-};
-
-const buildPath = (option) => {
-    const config = Object.assign({}, option);
-    const { branch, version } = config;
-
-    if (!branch) {
-        throw new TypeError('A branch is required to create the build path.');
-    }
-    if (!version) {
-        throw new TypeError('A version is required to create the build path');
-    }
-
-    return path.join('build', branch, version);
 };
 
 const buildDir = (option) => {
