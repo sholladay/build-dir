@@ -30,7 +30,7 @@
   "dependencies": {
     "build-data": "^0.3.0",
     "del": "^2.2.0",
-    "fs-atomic": "^0.5.0"
+    "fs-atomic": "^0.7.0"
   },
   "devDependencies": {
     "eslint-config-tidy": "^0.3.0",
