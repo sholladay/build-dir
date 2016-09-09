@@ -29,6 +29,7 @@ Get a path to use when writing the build.
 ```js
 buildDir().then((dirPath) => {
     console.log('Build directory:', dirPath);
+    // 'build/master/1.0.0'
 });
 ```
 
@@ -112,11 +113,11 @@ Returns a promise for an object with these fields:
 
 ## Related
 
-- [build-version](https://github.com/sholladay/build-version) - Get a version for your build.
-- [build-data](https://github.com/sholladay/build-data) - Get metadata for your build.
-- [build-path](https://github.com/sholladay/build-dir) - Get a path for the given build.
-- [build-keys](https://github.com/sholladay/build-keys) - Get the paths of files from your build.
-- [build-files](https://github.com/sholladay/build-files) - Read the files from your build.
+ - [build-version](https://github.com/sholladay/build-version) - Get a version for your build.
+ - [build-data](https://github.com/sholladay/build-data) - Get metadata for your build.
+ - [build-path](https://github.com/sholladay/build-path) - Get a path for the given build.
+ - [build-keys](https://github.com/sholladay/build-keys) - Get the paths of files from your build.
+ - [build-files](https://github.com/sholladay/build-files) - Read the files from your build.
 
 ## Contributing
 
