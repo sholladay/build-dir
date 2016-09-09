@@ -38,15 +38,16 @@ Get the path that was used for the most recent build.
 ```js
 buildDir.latest().then((dirPath) => {
     console.log('Build directory:', dirPath);
+    // 'build/master/0.1.0'
 });
 ```
 
 Set up convenient `latest-build` and branch-specific `latest` links.
 
 ```js
-buildDir.link().then(() => {
+buildDir.link({ branch : 'dev', version : '1.1.1' }).then(() => {
     console.log('Linking complete.')
-    // latest-build -> build/<branch>/latest -> build/<branch>/<version>
+    // latest-build -> build/dev/latest -> build/dev/1.1.1
 });
 ```
 
