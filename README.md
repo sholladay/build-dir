@@ -114,11 +114,12 @@ Returns a promise for an object with these fields:
 
 ## Related
 
- - [build-version](https://github.com/sholladay/build-version) - Get a version for your build.
+ - [delivr](https://github.com/sholladay/delivr) - Build your code and ship it to S3.
+ - [build-files](https://github.com/sholladay/build-files) - Read the files from your build.
+ - [build-keys](https://github.com/sholladay/build-keys) - Get the paths of files from your build.
  - [build-data](https://github.com/sholladay/build-data) - Get metadata for your build.
  - [build-path](https://github.com/sholladay/build-path) - Get a path for the given build.
- - [build-keys](https://github.com/sholladay/build-keys) - Get the paths of files from your build.
- - [build-files](https://github.com/sholladay/build-files) - Read the files from your build.
+ - [build-version](https://github.com/sholladay/build-version) - Get a version for your build.
 
 ## Contributing
 
