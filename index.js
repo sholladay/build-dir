@@ -40,7 +40,7 @@ buildDir.latest = (option) => {
     return buildData.latest(option).then(buildPath);
 };
 
-buildDir.link = (option) => {
+buildDir.link = async (option) => {
     const config = Object.assign({}, option);
     const { branch, version } = config;
 
@@ -59,40 +59,31 @@ buildDir.link = (option) => {
     });
 
     const absBranchLatestLink = path.resolve(cwd, branchLatestPath);
-
     const absLatestBuildLink = path.resolve(cwd, 'latest-build');
 
-    return fsAtomic.symlink(version, absBranchLatestLink).then(() => {
-        return fsAtomic.symlink(branchLatestPath, absLatestBuildLink);
-    });
+    await fsAtomic.symlink(version, absBranchLatestLink);
+    await fsAtomic.symlink(branchLatestPath, absLatestBuildLink);
 };
 
-buildDir.prepare = (option) => {
+buildDir.prepare = async (option) => {
     const config = Object.assign({}, option);
     const cwd = config.cwd = path.resolve(config.cwd || '');
 
-    return buildData(config).then((data) => {
-        return mkdtemp().then((tempPath) => {
-            return {
-                path : tempPath,
-                finalize() {
-                    const newPath = path.resolve(cwd, buildPath(data));
-                    return fsAtomic.mkdir(path.dirname(newPath))
-                        .then(() => {
-                            return del(newPath, {
-                                force : true
-                            });
-                        })
-                        .then(() => {
-                            return rename(tempPath, newPath);
-                        })
-                        .then(() => {
-                            return buildDir.link(Object.assign({ cwd }, data));
-                        });
-                }
-            };
-        });
-    });
+    const data = await buildData(config);
+    const tempPath = await mkdtemp();
+
+    return {
+        path : tempPath,
+        async finalize() {
+            const newPath = path.resolve(cwd, buildPath(data));
+            await fsAtomic.mkdir(path.dirname(newPath));
+            await del(newPath, {
+                force : true
+            });
+            await rename(tempPath, newPath);
+            await buildDir.link(Object.assign({ cwd }, data));
+        }
+    };
 };
 
 module.exports = buildDir;
