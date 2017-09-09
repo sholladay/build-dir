@@ -1,57 +1,63 @@
 {
-  "name": "build-dir",
-  "version": "0.7.1",
-  "description": "Get a place to put your build.",
-  "homepage": "https://github.com/sholladay/build-dir",
-  "main": "index.js",
-  "author": {
-    "name": "Seth Holladay",
-    "url": "http://seth-holladay.com",
-    "email": "me@seth-holladay.com"
-  },
-  "scripts": {
-    "test": "xo"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:sholladay/build-dir.git"
-  },
-  "bugs": {
-    "url": "https://github.com/sholladay/build-dir/issues",
-    "email": "me@seth-holladay.com"
-  },
-  "engines": {
-    "node": ">=6"
-  },
-  "license": "MPL-2.0",
-  "files": [
-    "index.js"
-  ],
-  "dependencies": {
-    "build-data": "^0.3.0",
-    "build-path": "^0.1.0",
-    "del": "^2.2.0",
-    "fs-atomic": "^0.7.0"
-  },
-  "devDependencies": {
-    "eslint-config-tidy": "^0.4.0",
-    "xo": "^0.17.1"
-  },
-  "keywords": [
-    "compile",
-    "build",
-    "builds",
-    "branch",
-    "version",
-    "path",
-    "paths",
-    "dir",
-    "dirs",
-    "directory",
-    "directories",
-    "tooling"
-  ],
-  "xo": {
-    "extend": "tidy"
-  }
+    "name": "build-dir",
+    "version": "0.7.1",
+    "description": "Get a place to put your build",
+    "homepage": "https://github.com/sholladay/build-dir",
+    "main": "index.js",
+    "author": {
+        "name": "Seth Holladay",
+        "url": "https://seth-holladay.com",
+        "email": "me@seth-holladay.com"
+    },
+    "scripts": {
+        "test": "xo && ava"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:sholladay/build-dir.git"
+    },
+    "bugs": {
+        "url": "https://github.com/sholladay/build-dir/issues",
+        "email": "me@seth-holladay.com"
+    },
+    "engines": {
+        "node": ">=8"
+    },
+    "license": "MPL-2.0",
+    "files": [
+        "index.js"
+    ],
+    "dependencies": {
+        "build-data": "^0.4.0",
+        "build-path": "^1.0.0",
+        "del": "^3.0.0",
+        "fs-atomic": "^0.7.0"
+    },
+    "devDependencies": {
+        "ava": "^0.22.0",
+        "eslint-config-tidy": "^0.5.0",
+        "mkdirtemp": "^1.1.0",
+        "write-pkg": "^3.1.0",
+        "xo": "^0.18.2"
+    },
+    "keywords": [
+        "compile",
+        "build",
+        "builds",
+        "branch",
+        "version",
+        "process",
+        "link",
+        "path",
+        "paths",
+        "dir",
+        "dirs",
+        "directory",
+        "directories",
+        "tool",
+        "tooling"
+    ],
+    "xo": {
+        "extend": "tidy"
+    }
 }

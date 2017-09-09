@@ -67,7 +67,8 @@ buildDir.link = async (option) => {
 
 buildDir.prepare = async (option) => {
     const config = Object.assign({}, option);
-    const cwd = config.cwd = path.resolve(config.cwd || '');
+    const cwd = path.resolve(config.cwd || '');
+    config.cwd = cwd;
 
     const data = await buildData(config);
     const tempPath = await mkdtemp();
@@ -76,7 +77,7 @@ buildDir.prepare = async (option) => {
         path : tempPath,
         async finalize() {
             const newPath = path.resolve(cwd, buildPath(data));
-            await fsAtomic.mkdir(path.dirname(newPath));
+            await fsAtomic.mkdir(path.join(newPath, '..'));
             await del(newPath, {
                 force : true
             });
