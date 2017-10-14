@@ -1,36 +1,15 @@
 'use strict';
 
-const path = require('path');
-const os = require('os');
 const fs = require('fs');
+const path = require('path');
+const util = require('util');
 const fsAtomic = require('fs-atomic');
+const mkdirtemp = require('mkdirtemp');
 const buildData = require('build-data');
 const buildPath = require('build-path');
 const del = require('del');
 
-const rename = (oldPath, newPath) => {
-    return new Promise((resolve, reject) => {
-        fs.rename(oldPath, newPath, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve();
-        });
-    });
-};
-
-const mkdtemp = () => {
-    return new Promise((resolve, reject) => {
-        fs.mkdtemp(path.join(os.tmpdir(), '/'), (err, tempPath) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve(tempPath);
-        });
-    });
-};
+const rename = util.promisify(fs.rename);
 
 const buildDir = (option) => {
     return buildData(option).then(buildPath);
@@ -71,7 +50,7 @@ buildDir.prepare = async (option) => {
     config.cwd = cwd;
 
     const data = await buildData(config);
-    const tempPath = await mkdtemp();
+    const tempPath = await mkdirtemp();
 
     return {
         path : tempPath,

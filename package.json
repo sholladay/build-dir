@@ -31,12 +31,12 @@
         "build-data": "^0.4.0",
         "build-path": "^1.0.0",
         "del": "^3.0.0",
-        "fs-atomic": "^0.7.0"
+        "fs-atomic": "^0.7.0",
+        "mkdirtemp": "^1.1.0"
     },
     "devDependencies": {
         "ava": "^0.22.0",
         "eslint-config-tidy": "^0.5.0",
-        "mkdirtemp": "^1.1.0",
         "write-pkg": "^3.1.0",
         "xo": "^0.18.2"
     },
